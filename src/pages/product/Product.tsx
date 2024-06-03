@@ -2,16 +2,15 @@ import Table from '../../components/ui/table/Table.tsx';
 import TableRow from '../../components/ui/table/TableRow.tsx';
 import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid';
 import Button from '../../components/ui/Button.tsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DeleteModal from '../../components/ui/modal/DeleteModal.tsx';
 import ProductUpdateModal from './ProductUpdateModal.tsx';
 import { ProductDto } from '../../dto/product.dto.ts';
-import { mockProducts } from '../../data/mockData.ts';
 import ProductCreateModal from './ProductCreateModal.tsx';
+import { deleteProductById, getAllProduct } from '../../api/product.api.ts';
 
 export default function Product() {
-	//TODO: add real data
-	const dataProduct: ProductDto[] = mockProducts;
+	const [dataProduct, setDataProduct] = useState<ProductDto[]>([]);
 	const [isUpdate, setIsUpdate] = useState<boolean>(false);
 	const [isCreate, setIsCreate] = useState<boolean>(false);
 	const [isDelete, setIsDelete] = useState<boolean>(false);
@@ -19,10 +18,30 @@ export default function Product() {
 		null
 	);
 
-	const handleDeleteProduct = () => {
-		//TODO: add request
-		console.log(selectedProduct);
-		setIsDelete(false);
+	const getData = async () => {
+		const response = await getAllProduct();
+		if (response && response.status === 200) {
+			const data: ProductDto[] = response.data.map((elem: ProductDto) => {
+				return {
+					...elem,
+					price: Number(elem.price),
+					quantity: Number(elem.quantity),
+				};
+			});
+			setDataProduct(data);
+		}
+	};
+	useEffect(() => {
+		getData();
+		//TODO: fix update
+	}, [isCreate]);
+
+	const handleDeleteProduct = async () => {
+		//TODO: add proper message
+		const response = await deleteProductById(selectedProduct?._id || '');
+		if (response && response.status === 200) {
+			setIsDelete(false);
+		}
 	};
 
 	return (
@@ -39,11 +58,11 @@ export default function Product() {
 					<Table columns={['Name', 'Category', 'Price', 'Quantity', 'Actions']}>
 						{dataProduct.map((product, index) => (
 							<tr
-								key={product.id}
+								key={product._id}
 								className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
 							>
 								<TableRow rowData={product.name} />
-								<TableRow rowData={product.category.name} />
+								<TableRow rowData={product.categoryId} />
 								<TableRow rowData={product.price.toFixed(2)} />
 								<TableRow rowData={product.quantity} />
 								<td className='px-4 py-3 text-right'>

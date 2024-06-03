@@ -14,7 +14,7 @@ export default function OrderCreateModal({
 	title,
 }: OrderCreateModalProps) {
 	const initValues: OrderDto = {
-		id: 0,
+		_id: 0,
 		orderNumber: 0,
 		customerName: '',
 		date: new Date().toDateString(),

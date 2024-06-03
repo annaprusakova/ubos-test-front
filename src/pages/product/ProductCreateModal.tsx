@@ -1,7 +1,7 @@
 import Modal from '../../components/ui/modal/Modal.tsx';
 import { ProductDto } from '../../dto/product.dto.ts';
 import ProductModal from './ProductModal.tsx';
-import { mockCategories } from '../../data/mockData.ts';
+import { createNewProduct } from '../../api/product.api.ts';
 
 type ProductCreateModalProps = {
 	isOpen: boolean;
@@ -15,16 +15,22 @@ export default function ProductCreateModal({
 	title,
 }: ProductCreateModalProps) {
 	const initValues: ProductDto = {
-		id: 0,
+		_id: '',
 		name: '',
-		category: mockCategories[0],
+		categoryId: '',
 		price: 0,
 		quantity: 0,
 	};
-	const handleCreateProduct = (values: ProductDto) => {
-		//TODO: add request
-		console.log(values);
+
+	const handleCreateProduct = async (values: ProductDto) => {
+		delete values._id;
+		const response = await createNewProduct(values);
+		//TODO: add message
+		if (response && response.status === 200) {
+			onClose();
+		}
 	};
+
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} title={title}>
 			<ProductModal

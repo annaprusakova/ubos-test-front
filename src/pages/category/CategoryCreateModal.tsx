@@ -1,6 +1,7 @@
 import Modal from '../../components/ui/modal/Modal.tsx';
 import { CategoryDto } from '../../dto/category.dto.ts';
 import CategoryModal from './CategoryModal.tsx';
+import { createNewCategory } from '../../api/category.api.ts';
 
 type CategoryCreateModalProps = {
 	isOpen: boolean;
@@ -14,13 +15,15 @@ export default function CategoryCreateModal({
 	title,
 }: CategoryCreateModalProps) {
 	const initValues: CategoryDto = {
-		id: 0,
 		name: '',
 	};
 
-	const handleCreateCategory = (values: CategoryDto) => {
-		//TODO: add request
-		console.log(values);
+	const handleCreateCategory = async (values: CategoryDto) => {
+		delete values._id;
+		const response = await createNewCategory(values);
+		if (response && response.status === 200) {
+			onClose();
+		}
 	};
 
 	return (

@@ -1,5 +1,5 @@
 export type OrderDto = {
-	id: number;
+	_id: number;
 	orderNumber: number;
 	customerName: string;
 	date: string;

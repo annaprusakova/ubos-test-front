@@ -5,11 +5,10 @@ import Button from '../../components/ui/Button.tsx';
 import { useFormik } from 'formik';
 import { ProductValidation } from '../../validations/product.validation.ts';
 import { ProductDto } from '../../dto/product.dto.ts';
-import { mockCategories } from '../../data/mockData.ts';
 
 type ProductModalProps = {
 	initValues: ProductDto;
-	onSubmit: (values: ProductDto) => void;
+	onSubmit: (values: ProductDto) => Promise<void>;
 	onClose: () => void;
 	type: 'Update' | 'Create';
 };
@@ -23,9 +22,10 @@ export default function ProductModal({
 		initialValues: initValues,
 		onSubmit: onSubmit,
 		validationSchema: ProductValidation,
-		validateOnChange: true,
+		validateOnChange: false,
 		validateOnBlur: false,
 	});
+
 	return (
 		<div>
 			<Fieldset className='space-y-8'>
@@ -38,11 +38,10 @@ export default function ProductModal({
 				/>
 				<SelectField
 					label={'Category'}
-					name={'category'}
-					options={mockCategories}
-					value={values.category}
-					error={errors.category?.name}
-					onChange={(e) => setFieldValue('category', e.target.value)}
+					name={'categoryId'}
+					value={values.categoryId}
+					error={errors.categoryId}
+					setFieldValue={setFieldValue}
 				/>
 				<InputField
 					label={'Price'}
@@ -68,7 +67,6 @@ export default function ProductModal({
 				<Button
 					onClick={() => {
 						submitForm();
-						onClose();
 					}}
 					text={type}
 				/>

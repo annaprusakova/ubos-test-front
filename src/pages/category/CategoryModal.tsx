@@ -22,7 +22,7 @@ export default function CategoryModal({
 		initialValues: initValues,
 		onSubmit: onSubmit,
 		validationSchema: CategoryValidation,
-		validateOnChange: true,
+		validateOnChange: false,
 		validateOnBlur: false,
 	});
 	return (
@@ -45,7 +45,6 @@ export default function CategoryModal({
 				<Button
 					onClick={() => {
 						submitForm();
-						onClose();
 					}}
 					text={type}
 				/>

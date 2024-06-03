@@ -1,9 +1,7 @@
-import { CategoryDto } from './category.dto.ts';
-
 export type ProductDto = {
-	id: number;
+	_id?: string;
 	name: string;
-	category: CategoryDto;
+	categoryId: string;
 	price: number;
 	quantity: number;
 };

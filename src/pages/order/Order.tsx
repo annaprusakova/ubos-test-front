@@ -36,7 +36,7 @@ export default function Order() {
 					>
 						{orderData.map((order, index) => (
 							<tr
-								key={order.id}
+								key={order._id}
 								className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
 							>
 								<TableRow rowData={order.orderNumber} />

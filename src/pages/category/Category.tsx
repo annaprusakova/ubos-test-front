@@ -2,22 +2,32 @@ import Button from '../../components/ui/Button.tsx';
 import Table from '../../components/ui/table/Table.tsx';
 import TableRow from '../../components/ui/table/TableRow.tsx';
 import { PencilIcon, TrashIcon } from '@heroicons/react/16/solid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DeleteModal from '../../components/ui/modal/DeleteModal.tsx';
-import { mockCategories } from '../../data/mockData.ts';
 import { CategoryDto } from '../../dto/category.dto.ts';
 import CategoryUpdateModal from './CategoryUpdateModal.tsx';
 import CategoryCreateModal from './CategoryCreateModal.tsx';
+import { getAllCategories } from '../../api/category.api.ts';
 
 export default function Category() {
-	//TODO: add real data
-	const categoryData: CategoryDto[] = mockCategories;
+	const [categoryData, setCategoryData] = useState<CategoryDto[]>([]);
 	const [isUpdate, setIsUpdate] = useState<boolean>(false);
 	const [isCreate, setIsCreate] = useState<boolean>(false);
 	const [isDelete, setIsDelete] = useState<boolean>(false);
 	const [selectedCategory, setSelectedCategory] = useState<CategoryDto | null>(
 		null
 	);
+
+	const getData = async () => {
+		const response = await getAllCategories();
+		if (response && response.status === 200) {
+			const data: CategoryDto[] = response.data;
+			setCategoryData(data);
+		}
+	};
+	useEffect(() => {
+		getData();
+	}, []);
 
 	return (
 		<>
@@ -33,7 +43,7 @@ export default function Category() {
 					<Table columns={['Name', 'Actions']}>
 						{categoryData.map((category, index) => (
 							<tr
-								key={category.id}
+								key={category._id}
 								className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
 							>
 								<TableRow rowData={category.name} />

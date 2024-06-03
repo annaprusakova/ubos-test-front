@@ -1,6 +1,7 @@
 import Modal from '../../components/ui/modal/Modal.tsx';
 import { ProductDto } from '../../dto/product.dto.ts';
 import ProductModal from './ProductModal.tsx';
+import { updateProductById } from '../../api/product.api.ts';
 
 type ProductEditModalProps = {
 	isOpen: boolean;
@@ -15,9 +16,12 @@ export default function ProductUpdateModal({
 	title,
 	selectedItem,
 }: ProductEditModalProps) {
-	const handleUpdateProduct = (values: ProductDto) => {
-		//TODO: add request
-		console.log(values);
+	const handleUpdateProduct = async (values: ProductDto) => {
+		//TODO: add message
+		const response = await updateProductById(values);
+		if (response && response.status === 200) {
+			onClose();
+		}
 	};
 
 	return (
