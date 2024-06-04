@@ -1,8 +1,10 @@
 import { ArchiveBoxIcon } from '@heroicons/react/16/solid';
 import { routes } from '../../../data/routes.ts';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function Layout() {
+	const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false);
 	const location = useLocation();
 	const currentPage =
 		location.pathname !== '/' ? location.pathname.replace('/', '') : 'home';
@@ -39,7 +41,45 @@ export default function Layout() {
 				</div>
 			</div>
 			<div className='flex flex-col'>
-				<header className='flex h-14 items-center gap-4 border-b bg-gray-100/40 px-6'>
+				<header className='flex h-14 items-center gap-4 border-b bg-gray-100 px-6'>
+					<div onClick={() => setIsMobileOpen(true)} className='lg:hidden'>
+						<ArchiveBoxIcon className='h-6 w-6' />
+						<span className='sr-only'>Home</span>
+					</div>
+					{isMobileOpen && (
+						<div
+							className={
+								'fixed top-0 left-0 w-[300px] h-screen bg-gray-100 z-10 duration-300'
+							}
+						>
+							<nav>
+								<div className='flex h-14 items-center border-b px-6'>
+									<Link to={'/'} onClick={() => setIsMobileOpen(false)}>
+										<div className='flex items-center gap-2 font-semibold'>
+											<ArchiveBoxIcon className='h-6 w-6' />
+											<span>Inventory</span>
+										</div>
+									</Link>
+								</div>
+								<ul className='flex flex-col p-4 text-gray-800'>
+									{routes.map((elem) => (
+										<a
+											className={
+												location.pathname === elem.route
+													? 'flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-2 text-gray-900 transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50'
+													: 'flex items-center gap-3 rounded-lg px-3 py-2 ' +
+														'text-gray-500 transition-all hover:text-gray-900'
+											}
+											href={elem.route}
+											key={elem.id}
+										>
+											{elem.name}
+										</a>
+									))}
+								</ul>
+							</nav>
+						</div>
+					)}
 					<div className='w-full flex-1 font-semibold'>
 						{currentPage.slice(0, 1).toUpperCase() + currentPage.slice(1)}
 					</div>
