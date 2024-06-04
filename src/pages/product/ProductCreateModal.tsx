@@ -7,12 +7,14 @@ type ProductCreateModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	title: string;
+	onReloadData: (value: boolean) => void;
 };
 
 export default function ProductCreateModal({
 	isOpen,
 	onClose,
 	title,
+	onReloadData,
 }: ProductCreateModalProps) {
 	const initValues: ProductDto = {
 		_id: '',
@@ -27,6 +29,7 @@ export default function ProductCreateModal({
 		const response = await createNewProduct(values);
 		//TODO: add message
 		if (response && response.status === 200) {
+			onReloadData(true);
 			onClose();
 		}
 	};

@@ -8,38 +8,52 @@ import ProductUpdateModal from './ProductUpdateModal.tsx';
 import { ProductDto } from '../../dto/product.dto.ts';
 import ProductCreateModal from './ProductCreateModal.tsx';
 import { deleteProductById, getAllProduct } from '../../api/product.api.ts';
+import { getCategoryById } from '../../api/category.api.ts';
 
 export default function Product() {
 	const [dataProduct, setDataProduct] = useState<ProductDto[]>([]);
 	const [isUpdate, setIsUpdate] = useState<boolean>(false);
 	const [isCreate, setIsCreate] = useState<boolean>(false);
 	const [isDelete, setIsDelete] = useState<boolean>(false);
+	const [isReloadData, setIsReloadData] = useState<boolean>(false);
 	const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(
 		null
 	);
 
 	const getData = async () => {
 		const response = await getAllProduct();
+		const data: ProductDto[] = [];
 		if (response && response.status === 200) {
-			const data: ProductDto[] = response.data.map((elem: ProductDto) => {
-				return {
-					...elem,
-					price: Number(elem.price),
-					quantity: Number(elem.quantity),
-				};
-			});
+			for (const elem of response.data) {
+				const response = await getCategoryById(elem.categoryId);
+				if (response && response.status === 200) {
+					data.push({
+						...elem,
+						categoryName: response.data[0].name,
+						price: Number(elem.price),
+						quantity: Number(elem.quantity),
+					});
+				} else {
+					data.push({
+						...elem,
+						price: Number(elem.price),
+						quantity: Number(elem.quantity),
+					});
+				}
+			}
 			setDataProduct(data);
+			setIsReloadData(false);
 		}
 	};
 	useEffect(() => {
 		getData();
-		//TODO: fix update
-	}, [isCreate]);
+	}, [isReloadData]);
 
 	const handleDeleteProduct = async () => {
 		//TODO: add proper message
 		const response = await deleteProductById(selectedProduct?._id || '');
 		if (response && response.status === 200) {
+			setIsReloadData(true);
 			setIsDelete(false);
 		}
 	};
@@ -62,7 +76,9 @@ export default function Product() {
 								className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
 							>
 								<TableRow rowData={product.name} />
-								<TableRow rowData={product.categoryId} />
+								<TableRow
+									rowData={product.categoryName || product.categoryId}
+								/>
 								<TableRow rowData={product.price.toFixed(2)} />
 								<TableRow rowData={product.quantity} />
 								<td className='px-4 py-3 text-right'>
@@ -100,12 +116,14 @@ export default function Product() {
 					isOpen={isUpdate}
 					onClose={() => setIsUpdate(false)}
 					title={'Update product'}
+					onReloadData={setIsReloadData}
 					selectedItem={selectedProduct}
 				/>
 			)}
 			<ProductCreateModal
 				isOpen={isCreate}
 				title={'Create New Product'}
+				onReloadData={setIsReloadData}
 				onClose={() => setIsCreate(false)}
 			/>
 		</>

@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { CategoryDto } from '../dto/category.dto.ts';
+import { OrderDto } from '../dto/order.dto.ts';
 
-const NODERED_URL = import.meta.env.VITE_NODERED_URL + '/category';
+const NODERED_URL = import.meta.env.VITE_NODERED_URL + '/order';
 
-export const getAllCategories = async () => {
+export const getAllOrders = async () => {
 	try {
 		return await axios.get(`${NODERED_URL}/all`);
 	} catch (error) {
@@ -11,7 +11,7 @@ export const getAllCategories = async () => {
 	}
 };
 
-export const getCategoryById = async (id: string) => {
+export const getOrderById = async (id: string) => {
 	try {
 		return await axios.get(`${NODERED_URL}/${id}`);
 	} catch (error) {
@@ -19,7 +19,7 @@ export const getCategoryById = async (id: string) => {
 	}
 };
 
-export const createNewCategory = async (data: Omit<CategoryDto, '_id'>) => {
+export const createNewOrder = async (data: Omit<OrderDto, '_id'>) => {
 	try {
 		return await axios.post(`${NODERED_URL}/new`, data);
 	} catch (error) {
@@ -27,7 +27,7 @@ export const createNewCategory = async (data: Omit<CategoryDto, '_id'>) => {
 	}
 };
 
-export const deleteCategoryById = async (id: string) => {
+export const deleteOrderById = async (id: string) => {
 	try {
 		return await axios.delete(`${NODERED_URL}/delete`, { data: { _id: id } });
 	} catch (error) {
@@ -35,7 +35,7 @@ export const deleteCategoryById = async (id: string) => {
 	}
 };
 
-export const updateCategoryById = async (data: CategoryDto) => {
+export const updateOrderById = async (data: OrderDto) => {
 	try {
 		return await axios.put(`${NODERED_URL}/update`, data);
 	} catch (error) {

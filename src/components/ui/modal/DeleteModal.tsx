@@ -20,12 +20,12 @@ export default function DeleteModal({
 			<div>
 				<p>Are you sure you want to delete {selectedItem || 'this record'}?</p>
 				<div className='flex gap-4 mt-3'>
+					<Button onClick={onClose} text={'Cancel'} />
 					<Button
-						onClick={onClose}
-						text={'Cancel'}
+						onClick={onDelete}
+						text={'Yes'}
 						styles={'bg-red-600 hover:bg-red-600/90'}
 					/>
-					<Button onClick={onDelete} text={'Yes'} />
 				</div>
 			</div>
 		</Modal>

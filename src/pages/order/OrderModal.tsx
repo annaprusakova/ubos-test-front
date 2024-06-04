@@ -22,7 +22,7 @@ export default function OrderModal({
 		initialValues: initValues,
 		onSubmit: onSubmit,
 		validationSchema: OrderValidation,
-		validateOnChange: true,
+		validateOnChange: false,
 		validateOnBlur: false,
 	});
 	return (

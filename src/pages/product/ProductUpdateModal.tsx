@@ -8,6 +8,7 @@ type ProductEditModalProps = {
 	onClose: () => void;
 	title: string;
 	selectedItem: ProductDto;
+	onReloadData: (value: boolean) => void;
 };
 
 export default function ProductUpdateModal({
@@ -15,11 +16,13 @@ export default function ProductUpdateModal({
 	onClose,
 	title,
 	selectedItem,
+	onReloadData,
 }: ProductEditModalProps) {
 	const handleUpdateProduct = async (values: ProductDto) => {
 		//TODO: add message
 		const response = await updateProductById(values);
 		if (response && response.status === 200) {
+			onReloadData(true);
 			onClose();
 		}
 	};

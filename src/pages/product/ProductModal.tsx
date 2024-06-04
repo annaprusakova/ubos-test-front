@@ -1,6 +1,6 @@
 import { Fieldset } from '@headlessui/react';
 import InputField from '../../components/ui/InputField.tsx';
-import SelectField from '../../components/ui/SelectField.tsx';
+import SelectCategory from '../../components/ui/SelectCategory.tsx';
 import Button from '../../components/ui/Button.tsx';
 import { useFormik } from 'formik';
 import { ProductValidation } from '../../validations/product.validation.ts';
@@ -36,7 +36,7 @@ export default function ProductModal({
 					error={errors.name}
 					onChange={(e) => setFieldValue('name', e.target.value)}
 				/>
-				<SelectField
+				<SelectCategory
 					label={'Category'}
 					name={'categoryId'}
 					value={values.categoryId}

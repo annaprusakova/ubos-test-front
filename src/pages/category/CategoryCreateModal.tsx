@@ -7,12 +7,14 @@ type CategoryCreateModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	title: string;
+	onReloadData: (value: boolean) => void;
 };
 
 export default function CategoryCreateModal({
 	isOpen,
 	onClose,
 	title,
+	onReloadData,
 }: CategoryCreateModalProps) {
 	const initValues: CategoryDto = {
 		name: '',
@@ -22,6 +24,7 @@ export default function CategoryCreateModal({
 		delete values._id;
 		const response = await createNewCategory(values);
 		if (response && response.status === 200) {
+			onReloadData(true);
 			onClose();
 		}
 	};

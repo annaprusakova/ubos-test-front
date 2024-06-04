@@ -7,13 +7,17 @@ import DeleteModal from '../../components/ui/modal/DeleteModal.tsx';
 import { CategoryDto } from '../../dto/category.dto.ts';
 import CategoryUpdateModal from './CategoryUpdateModal.tsx';
 import CategoryCreateModal from './CategoryCreateModal.tsx';
-import { getAllCategories } from '../../api/category.api.ts';
+import {
+	deleteCategoryById,
+	getAllCategories,
+} from '../../api/category.api.ts';
 
 export default function Category() {
 	const [categoryData, setCategoryData] = useState<CategoryDto[]>([]);
 	const [isUpdate, setIsUpdate] = useState<boolean>(false);
 	const [isCreate, setIsCreate] = useState<boolean>(false);
 	const [isDelete, setIsDelete] = useState<boolean>(false);
+	const [isReloadData, setIsReloadData] = useState<boolean>(false);
 	const [selectedCategory, setSelectedCategory] = useState<CategoryDto | null>(
 		null
 	);
@@ -23,11 +27,21 @@ export default function Category() {
 		if (response && response.status === 200) {
 			const data: CategoryDto[] = response.data;
 			setCategoryData(data);
+			setIsReloadData(false);
 		}
 	};
 	useEffect(() => {
 		getData();
-	}, []);
+	}, [isReloadData]);
+
+	const handleDeleteCategory = async () => {
+		//TODO: add proper message
+		const response = await deleteCategoryById(selectedCategory?._id || '');
+		if (response && response.status === 200) {
+			setIsReloadData(true);
+			setIsDelete(false);
+		}
+	};
 
 	return (
 		<>
@@ -73,7 +87,7 @@ export default function Category() {
 			<DeleteModal
 				isDelete={isDelete}
 				selectedItem={selectedCategory?.name || ''}
-				onDelete={() => setIsDelete(false)}
+				onDelete={handleDeleteCategory}
 				onClose={() => setIsDelete(false)}
 				title={'Delete The Category'}
 			/>
@@ -81,6 +95,7 @@ export default function Category() {
 				<CategoryUpdateModal
 					isOpen={isUpdate}
 					title={'Update Category'}
+					onReloadData={setIsReloadData}
 					onClose={() => setIsUpdate(false)}
 					selectedItem={selectedCategory}
 				/>
@@ -88,6 +103,7 @@ export default function Category() {
 			<CategoryCreateModal
 				isOpen={isCreate}
 				title={'Create New Category'}
+				onReloadData={setIsReloadData}
 				onClose={() => setIsCreate(false)}
 			/>
 		</>

@@ -16,7 +16,7 @@ type SelectProps = {
 		shouldValidate?: boolean | undefined
 	) => Promise<void> | Promise<FormikErrors<Omit<ProductDto, '_id'>>>;
 };
-export default function SelectField({
+export default function SelectCategory({
 	label,
 	name,
 	value,
@@ -29,7 +29,7 @@ export default function SelectField({
 		if (response && response.status === 200) {
 			const data: CategoryDto[] = response.data;
 			setOptions(data);
-			setFieldValue('categoryId', data[0]._id);
+			setFieldValue('categoryId', value || data[0]._id);
 		}
 	};
 	useEffect(() => {
@@ -48,7 +48,9 @@ export default function SelectField({
 				onChange={(e) => setFieldValue('categoryId', e.target.value)}
 			>
 				{options.map((elem) => (
-					<option key={elem._id}>{elem.name}</option>
+					<option key={elem._id} value={elem._id}>
+						{elem.name}
+					</option>
 				))}
 			</Select>
 			{error && <div className='text-red-500 text-sm mt-1'>{error}</div>}
