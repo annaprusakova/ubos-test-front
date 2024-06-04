@@ -1,12 +1,16 @@
 import Modal from '../../components/ui/modal/Modal.tsx';
 import { OrderDto } from '../../dto/order.dto.ts';
 import OrderModal from './OrderModal.tsx';
+import { updateOrderById } from '../../api/order.api.ts';
+import { messages } from '../../data/messages.ts';
 
 type OrderEditModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	title: string;
 	selectedItem: OrderDto;
+	onReloadData: (value: boolean) => void;
+	setMessage: (value: string) => void;
 };
 
 export default function OrderUpdateModal({
@@ -14,10 +18,18 @@ export default function OrderUpdateModal({
 	onClose,
 	title,
 	selectedItem,
+	onReloadData,
+	setMessage,
 }: OrderEditModalProps) {
-	const handleUpdateOrder = (values: OrderDto) => {
-		//TODO: add request
-		console.log(values);
+	const handleUpdateOrder = async (values: OrderDto) => {
+		const response = await updateOrderById(values);
+		if (response && response.status === 200) {
+			setMessage(messages.updateSuccess);
+			onReloadData(true);
+			onClose();
+		} else {
+			setMessage(messages.error);
+		}
 	};
 
 	return (

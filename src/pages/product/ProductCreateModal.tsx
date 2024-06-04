@@ -2,12 +2,14 @@ import Modal from '../../components/ui/modal/Modal.tsx';
 import { ProductDto } from '../../dto/product.dto.ts';
 import ProductModal from './ProductModal.tsx';
 import { createNewProduct } from '../../api/product.api.ts';
+import { messages } from '../../data/messages.ts';
 
 type ProductCreateModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	title: string;
 	onReloadData: (value: boolean) => void;
+	setMessage: (value: string) => void;
 };
 
 export default function ProductCreateModal({
@@ -15,6 +17,7 @@ export default function ProductCreateModal({
 	onClose,
 	title,
 	onReloadData,
+	setMessage,
 }: ProductCreateModalProps) {
 	const initValues: ProductDto = {
 		_id: '',
@@ -27,10 +30,12 @@ export default function ProductCreateModal({
 	const handleCreateProduct = async (values: ProductDto) => {
 		delete values._id;
 		const response = await createNewProduct(values);
-		//TODO: add message
 		if (response && response.status === 200) {
 			onReloadData(true);
 			onClose();
+			setMessage(messages.createSuccess);
+		} else {
+			setMessage(messages.error);
 		}
 	};
 

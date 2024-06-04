@@ -9,6 +9,8 @@ import OrderUpdateModal from './OrderUpdateModal.tsx';
 import OrderCreateModal from './OrderCreateModal.tsx';
 import { deleteOrderById, getAllOrders } from '../../api/order.api.ts';
 import moment from 'moment';
+import { messages } from '../../data/messages.ts';
+import InfoModal from '../../components/ui/modal/InfoModal.tsx';
 
 export default function Order() {
 	const [orderData, setOrderData] = useState<OrderDto[]>([]);
@@ -17,11 +19,11 @@ export default function Order() {
 	const [isDelete, setIsDelete] = useState<boolean>(false);
 	const [isReloadData, setIsReloadData] = useState<boolean>(false);
 	const [selectedOrder, setSelectedOrder] = useState<OrderDto | null>(null);
+	const [message, setMessage] = useState<string | null>(null);
 
 	const getData = async () => {
 		const response = await getAllOrders();
 		if (response && response.status === 200) {
-			console.log(response);
 			const data: OrderDto[] = response.data.map((elem: OrderDto) => {
 				return {
 					...elem,
@@ -36,11 +38,13 @@ export default function Order() {
 	}, [isReloadData]);
 
 	const handleDeleteOrder = async () => {
-		//TODO: add proper message
 		const response = await deleteOrderById(selectedOrder?._id || '');
 		if (response && response.status === 200) {
+			setMessage(messages.deleteSuccess);
 			setIsReloadData(true);
 			setIsDelete(false);
+		} else {
+			setMessage(messages.error);
 		}
 	};
 
@@ -95,7 +99,7 @@ export default function Order() {
 			</div>
 			<DeleteModal
 				isDelete={isDelete}
-				selectedItem={`${selectedOrder?._id} order`}
+				selectedItem={`${selectedOrder?._id.slice(0, 7)} order`}
 				onDelete={handleDeleteOrder}
 				onClose={() => setIsDelete(false)}
 				title={'Delete The Category'}
@@ -105,7 +109,9 @@ export default function Order() {
 					isOpen={isUpdate}
 					title={'Update Order'}
 					selectedItem={selectedOrder}
+					onReloadData={setIsReloadData}
 					onClose={() => setIsUpdate(false)}
+					setMessage={setMessage}
 				/>
 			)}
 			<OrderCreateModal
@@ -113,7 +119,15 @@ export default function Order() {
 				title={'Place Order'}
 				onReloadData={setIsReloadData}
 				onClose={() => setIsCreate(false)}
+				setMessage={setMessage}
 			/>
+			{message && (
+				<InfoModal
+					isOpen={!!message}
+					message={message}
+					setMessage={setMessage}
+				/>
+			)}
 		</>
 	);
 }

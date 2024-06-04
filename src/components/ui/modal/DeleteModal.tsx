@@ -1,7 +1,7 @@
 import Modal from './Modal.tsx';
 import Button from '../Button.tsx';
 
-type DeleteProductModalProps = {
+type DeleteModalProps = {
 	isDelete: boolean;
 	title: string;
 	onClose: () => void;
@@ -14,7 +14,7 @@ export default function DeleteModal({
 	onClose,
 	selectedItem,
 	onDelete,
-}: DeleteProductModalProps) {
+}: DeleteModalProps) {
 	return (
 		<Modal isOpen={isDelete} onClose={onClose} title={title}>
 			<div>

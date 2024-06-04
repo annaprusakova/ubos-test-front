@@ -11,6 +11,8 @@ import {
 	deleteCategoryById,
 	getAllCategories,
 } from '../../api/category.api.ts';
+import { messages } from '../../data/messages.ts';
+import InfoModal from '../../components/ui/modal/InfoModal.tsx';
 
 export default function Category() {
 	const [categoryData, setCategoryData] = useState<CategoryDto[]>([]);
@@ -21,6 +23,7 @@ export default function Category() {
 	const [selectedCategory, setSelectedCategory] = useState<CategoryDto | null>(
 		null
 	);
+	const [message, setMessage] = useState<string | null>(null);
 
 	const getData = async () => {
 		const response = await getAllCategories();
@@ -35,11 +38,13 @@ export default function Category() {
 	}, [isReloadData]);
 
 	const handleDeleteCategory = async () => {
-		//TODO: add proper message
 		const response = await deleteCategoryById(selectedCategory?._id || '');
 		if (response && response.status === 200) {
+			setMessage(messages.deleteSuccess);
 			setIsReloadData(true);
 			setIsDelete(false);
+		} else {
+			setMessage(messages.error);
 		}
 	};
 
@@ -98,6 +103,7 @@ export default function Category() {
 					onReloadData={setIsReloadData}
 					onClose={() => setIsUpdate(false)}
 					selectedItem={selectedCategory}
+					setMessage={setMessage}
 				/>
 			)}
 			<CategoryCreateModal
@@ -105,7 +111,15 @@ export default function Category() {
 				title={'Create New Category'}
 				onReloadData={setIsReloadData}
 				onClose={() => setIsCreate(false)}
+				setMessage={setMessage}
 			/>
+			{message && (
+				<InfoModal
+					isOpen={!!message}
+					message={message}
+					setMessage={setMessage}
+				/>
+			)}
 		</>
 	);
 }

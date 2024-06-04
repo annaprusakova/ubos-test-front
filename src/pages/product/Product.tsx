@@ -9,6 +9,8 @@ import { ProductDto } from '../../dto/product.dto.ts';
 import ProductCreateModal from './ProductCreateModal.tsx';
 import { deleteProductById, getAllProduct } from '../../api/product.api.ts';
 import { getCategoryById } from '../../api/category.api.ts';
+import { messages } from '../../data/messages.ts';
+import InfoModal from '../../components/ui/modal/InfoModal.tsx';
 
 export default function Product() {
 	const [dataProduct, setDataProduct] = useState<ProductDto[]>([]);
@@ -19,6 +21,7 @@ export default function Product() {
 	const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(
 		null
 	);
+	const [message, setMessage] = useState<string | null>(null);
 
 	const getData = async () => {
 		const response = await getAllProduct();
@@ -50,11 +53,13 @@ export default function Product() {
 	}, [isReloadData]);
 
 	const handleDeleteProduct = async () => {
-		//TODO: add proper message
 		const response = await deleteProductById(selectedProduct?._id || '');
 		if (response && response.status === 200) {
+			setMessage(messages.deleteSuccess);
 			setIsReloadData(true);
 			setIsDelete(false);
+		} else {
+			setMessage(messages.error);
 		}
 	};
 
@@ -118,6 +123,7 @@ export default function Product() {
 					title={'Update product'}
 					onReloadData={setIsReloadData}
 					selectedItem={selectedProduct}
+					setMessage={setMessage}
 				/>
 			)}
 			<ProductCreateModal
@@ -125,7 +131,15 @@ export default function Product() {
 				title={'Create New Product'}
 				onReloadData={setIsReloadData}
 				onClose={() => setIsCreate(false)}
+				setMessage={setMessage}
 			/>
+			{message && (
+				<InfoModal
+					isOpen={!!message}
+					message={message}
+					setMessage={setMessage}
+				/>
+			)}
 		</>
 	);
 }

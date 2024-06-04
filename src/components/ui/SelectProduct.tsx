@@ -27,7 +27,9 @@ export default function SelectProduct({
 	const getProducts = async () => {
 		const response = await getAllProduct();
 		if (response && response.status === 200) {
-			const data: ProductDto[] = response.data;
+			const data: ProductDto[] = response.data.filter(
+				(elem: ProductDto) => elem.quantity > 0
+			);
 			setOptions(data);
 			setFieldValue('productId', value || data[0]._id);
 		}

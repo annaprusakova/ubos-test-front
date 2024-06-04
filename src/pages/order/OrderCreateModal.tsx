@@ -4,18 +4,20 @@ import { Fieldset } from '@headlessui/react';
 import InputField from '../../components/ui/InputField.tsx';
 import Button from '../../components/ui/Button.tsx';
 import { useFormik } from 'formik';
-import { OrderValidation } from '../../validations/order.validation.ts';
+import { PlaceOrderValidation } from '../../validations/placeOrder.validation.ts';
 import { createNewOrder } from '../../api/order.api.ts';
 import SelectProduct from '../../components/ui/SelectProduct.tsx';
 import { OrderDto } from '../../dto/order.dto.ts';
 import { ProductDto } from '../../dto/product.dto.ts';
 import { getProductById, updateProductById } from '../../api/product.api.ts';
+import { messages } from '../../data/messages.ts';
 
 type OrderCreateModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	title: string;
 	onReloadData: (value: boolean) => void;
+	setMessage: (value: string) => void;
 };
 
 export default function OrderCreateModal({
@@ -23,6 +25,7 @@ export default function OrderCreateModal({
 	onClose,
 	title,
 	onReloadData,
+	setMessage,
 }: OrderCreateModalProps) {
 	const initValues: PlaceOrderDto = {
 		customerName: '',
@@ -57,11 +60,13 @@ export default function OrderCreateModal({
 				cost: product.price * values.quantity,
 			};
 			const response = await createNewOrder(data);
-			//TODO: add message
 			if (response && response.status === 200) {
+				setMessage(messages.createSuccess);
 				onReloadData(true);
 				updateProductData(product, values.quantity);
 				onClose();
+			} else {
+				setMessage(messages.error);
 			}
 		}
 	};
@@ -69,7 +74,7 @@ export default function OrderCreateModal({
 	const { errors, values, submitForm, setFieldValue, setErrors } = useFormik({
 		initialValues: initValues,
 		onSubmit: handleCreateOrder,
-		validationSchema: OrderValidation,
+		validationSchema: PlaceOrderValidation,
 		validateOnChange: false,
 		validateOnBlur: false,
 	});
