@@ -58,6 +58,8 @@ export default function OrderCreateModal({
 				customerName: values.customerName,
 				date: new Date().getTime(),
 				cost: product.price * values.quantity,
+				productId: values.productId,
+				quantity: values.quantity,
 			};
 			const response = await createNewOrder(data);
 			if (response && response.status === 200) {

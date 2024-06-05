@@ -3,4 +3,6 @@ export type OrderDto = {
 	customerName: string;
 	date: number;
 	cost: number;
+	quantity: number;
+	productId: string;
 };
